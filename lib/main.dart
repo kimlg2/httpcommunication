@@ -34,14 +34,20 @@ class _HttpcommunicationState extends State<Httpcommunication> {
   Future<String> getData() async {
     final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
     final response = await http.get(url);
-    // final body = response.body;
      print(response.body);
-     setState(() {
-       body = response.body;
-     });
      return response.body;
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    getData().then((data) {
+      setState(() {
+      body = data;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
