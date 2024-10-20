@@ -1,16 +1,14 @@
-# httpcommunication
+# HTTP 통신을 통한 비동기 데이터 처리
 
-A new Flutter project.
+- Httpcommunication
+  
+  1. StatefulWidget으로, 상태 변화가 있는 UI를 구성
+  2. 사용자가 데이터를 가져오는 버튼을 클릭할 때마다 UI가 업데이트되고 상태 관리
 
-## Getting Started
+- _HttpcommunicationState
+  
+  1. getData() 함수는 외부 API로부터 데이터를 비동기적 받아옴
+  2. http.get 메서드를 사용하여 https://jsonplaceholder.typicode.com/posts/1에서 데이터를 요청
+  3. 요청 결과는 response.body에 저장하고, setState를 통해 body 변수를 업데이트
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
