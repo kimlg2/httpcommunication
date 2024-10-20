@@ -39,23 +39,21 @@ class _HttpcommunicationState extends State<Httpcommunication> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    getData().then((data) {
-      setState(() {
-      body = data;
-      });
-    });
-  }
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-        child: Text(body),
+        child: FutureBuilder<String>(
+          future: getData(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              body = snapshot.data!;
+            }
+            return Text(body);
+          }
+        ),
       ),
       floatingActionButton:
       FloatingActionButton(onPressed: () {
