@@ -22,8 +22,25 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Httpcommunication extends StatelessWidget {
+class Httpcommunication extends StatefulWidget {
   const Httpcommunication({super.key});
+
+  @override
+  State<Httpcommunication> createState() => _HttpcommunicationState();
+}
+
+class _HttpcommunicationState extends State<Httpcommunication> {
+  String body = 'Loading';
+  Future<String> getData() async {
+    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
+    final response = await http.get(url);
+    // final body = response.body;
+     print(response.body);
+     setState(() {
+       body = response.body;
+     });
+     return response.body;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +48,13 @@ class Httpcommunication extends StatelessWidget {
       appBar: AppBar(
         title: const Text('HTTP 통신'),
       ),
-      body: const Placeholder(),
+      body: Center(
+        child: Text(body),
+      ),
+      floatingActionButton:
+      FloatingActionButton(onPressed: () {
+        getData();
+      }),
     );
   }
 }
