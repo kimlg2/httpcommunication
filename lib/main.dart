@@ -45,9 +45,10 @@ class _HttpcommunicationState extends State<Httpcommunication> {
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-          child: ListenableBuilder(listenable: model, builder: (BuildContext
+          child: ListenableBuilder(listenable: model,
+            builder: (BuildContext
           context, Widget? child) {
-            return Text('${model.state.title} : ${model.state.body}');
+            return Text('${model.value.title} : ${model.value.body}');
           },
           ),
       ),
@@ -59,15 +60,14 @@ class _HttpcommunicationState extends State<Httpcommunication> {
   }
 }
 
-class HttpcommunicationModel with ChangeNotifier {
+class HttpcommunicationModel extends ValueNotifier<HttpState> {
+  HttpcommunicationModel() : super(HttpState()){
+    getUiData();
+  }
 
-  HttpState _state = HttpState();
 
-  HttpState get state => _state;
 
- HttpcommunicationModel() {
-   getUiData();
- }
+
   Future<String> _getData() async {
     final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
     final response = await http.get(url);
@@ -79,14 +79,13 @@ class HttpcommunicationModel with ChangeNotifier {
     final jsonString = await _getData();
     final jsonMap = jsonDecode(jsonString) as Map;
 
-    _state = state.copyWith(
+     value = value.copyWith(
       title: jsonMap['title'],
       body: jsonMap['body'],
     );
-    // _body = jsonMap['body'];
-    // _title = jsonMap['title'];
 
-    notifyListeners();
+
+
   }
 }
 
