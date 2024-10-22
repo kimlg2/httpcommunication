@@ -2,16 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp( MyApp());
+  runApp( const MyApp());
 }
 
 class MyApp extends StatelessWidget {
 
-  final model =  HttpcommunicationModel();
 
-   MyApp({super.key});
+
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +23,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ListenableBuilder(
-       listenable:model,
-        builder: (BuildContext context, Widget? child) {
-         return Httpcommunication(
-             model: model,
-         );
-        },
+      home: ChangeNotifierProvider<HttpcommunicationModel>(
+        create: (BuildContext context) => HttpcommunicationModel(),
+       child: const Httpcommunication(),
+
       ),
     );
 
@@ -36,16 +34,13 @@ class MyApp extends StatelessWidget {
 }
 
 class Httpcommunication extends StatelessWidget {
-  final HttpcommunicationModel model;
   const Httpcommunication({
     super.key,
-    required this.model});
-
-
+   });
 
   @override
   Widget build(BuildContext context) {
-
+    final model = context.watch<HttpcommunicationModel>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('HTTP 통신'),
@@ -56,7 +51,8 @@ class Httpcommunication extends StatelessWidget {
 
       floatingActionButton:
       FloatingActionButton(onPressed: () {
-        model.getUiData();
+
+        context.read<HttpcommunicationModel>().getUiData();
       }),
     );
   }
