@@ -47,7 +47,7 @@ class _HttpcommunicationState extends State<Httpcommunication> {
       body: Center(
           child: ListenableBuilder(listenable: model, builder: (BuildContext
           context, Widget? child) {
-            return Text('${model.title} : ${model.body}');
+            return Text('${model.state.title} : ${model.state.body}');
           },
           ),
       ),
@@ -60,15 +60,14 @@ class _HttpcommunicationState extends State<Httpcommunication> {
 }
 
 class HttpcommunicationModel with ChangeNotifier {
-  String _title = '';
-  String _body = 'Loading';
 
-    Httpcommunication() {
-      getUiData();
-    }
+  HttpState _state = HttpState();
 
-  String get title => _title;
-  String get body => _body;
+  HttpState get state => _state;
+
+ HttpcommunicationModel() {
+   getUiData();
+ }
   Future<String> _getData() async {
     final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
     final response = await http.get(url);
@@ -80,13 +79,33 @@ class HttpcommunicationModel with ChangeNotifier {
     final jsonString = await _getData();
     final jsonMap = jsonDecode(jsonString) as Map;
 
-    _body = jsonMap['body'];
-    _title = jsonMap['title'];
+    _state = state.copyWith(
+      title: jsonMap['title'],
+      body: jsonMap['body'],
+    );
+    // _body = jsonMap['body'];
+    // _title = jsonMap['title'];
 
     notifyListeners();
   }
-
-
 }
 
+class HttpState {
+ final String title;
+ final String body;
+
+ HttpState({
+   this.title = '',
+   this.body = 'Loading',
+});
+ HttpState copyWith ({
+   String? title,
+   String? body,
+}) {
+   return HttpState(
+     title: title ?? this.title,
+     body: body ?? this.body,
+   );
+ }
+}
 
