@@ -40,13 +40,17 @@ class Httpcommunication extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<HttpcommunicationModel>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-          child: Text('${model.value.title} : ${model.value.body}'),
+          child: Consumer<HttpcommunicationModel>(
+            builder: (BuildContext context, model, Widget? child) {
+            return Text('${model.value.title} : ${model.value.body}');
+          },
+          ),
           ),
 
       floatingActionButton:
