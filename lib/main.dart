@@ -34,14 +34,7 @@ class Httpcommunication extends StatefulWidget {
 class _HttpcommunicationState extends State<Httpcommunication> {
   final model  = HttpcommunicationModel();
 
-  @override
-  void initState() {
-    super.initState();
-    model.getUiData().
-    whenComplete(() => setState(() {
 
-    }));
-  }
 
 
   @override
@@ -52,7 +45,11 @@ class _HttpcommunicationState extends State<Httpcommunication> {
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-          child: Text('${model.title} : ${model.body}'),
+          child: ListenableBuilder(listenable: model, builder: (BuildContext
+          context, Widget? child) {
+            return Text('${model.title} : ${model.body}');
+          },
+          ),
       ),
       floatingActionButton:
       FloatingActionButton(onPressed: () {
@@ -62,10 +59,13 @@ class _HttpcommunicationState extends State<Httpcommunication> {
   }
 }
 
-class HttpcommunicationModel {
+class HttpcommunicationModel with ChangeNotifier {
   String _title = '';
   String _body = 'Loading';
 
+    Httpcommunication() {
+      getUiData();
+    }
 
   String get title => _title;
   String get body => _body;
@@ -76,12 +76,14 @@ class HttpcommunicationModel {
     return response.body;
   }
 
-  Future<void> getUiData() async {
+  void getUiData() async {
     final jsonString = await _getData();
     final jsonMap = jsonDecode(jsonString) as Map;
 
     _body = jsonMap['body'];
     _title = jsonMap['title'];
+
+    notifyListeners();
   }
 
 
