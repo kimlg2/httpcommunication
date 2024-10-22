@@ -32,43 +32,59 @@ class Httpcommunication extends StatefulWidget {
 }
 
 class _HttpcommunicationState extends State<Httpcommunication> {
-  String title = '';
-  String body = 'Loading';
+  final model  = HttpcommunicationModel();
 
-  Future<String> getData() async {
-    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
-    final response = await http.get(url);
-     print(response.body);
-     return response.body;
+  @override
+  void initState() {
+    super.initState();
+    model.getUiData().
+    whenComplete(() => setState(() {
+
+    }));
   }
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-        child: FutureBuilder<String>(
-          future: getData(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final jsonString = snapshot.data!;
-              final jsonMap = jsonDecode(jsonString) as Map;
-
-              body = jsonMap['body'];
-              title = jsonMap['title'];
-            }
-            return Text('$title : $body');
-          }
-        ),
+          child: Text('${model.title} : ${model.body}'),
       ),
       floatingActionButton:
       FloatingActionButton(onPressed: () {
-        getData();
+        model.getUiData();
       }),
     );
   }
+}
+
+class HttpcommunicationModel {
+  String _title = '';
+  String _body = 'Loading';
+
+
+  String get title => _title;
+  String get body => _body;
+  Future<String> _getData() async {
+    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
+    final response = await http.get(url);
+    print(response.body);
+    return response.body;
+  }
+
+  Future<void> getUiData() async {
+    final jsonString = await _getData();
+    final jsonMap = jsonDecode(jsonString) as Map;
+
+    _body = jsonMap['body'];
+    _title = jsonMap['title'];
+  }
+
+
 }
 
 
