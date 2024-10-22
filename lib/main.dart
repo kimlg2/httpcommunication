@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,7 +32,9 @@ class Httpcommunication extends StatefulWidget {
 }
 
 class _HttpcommunicationState extends State<Httpcommunication> {
+  String title = '';
   String body = 'Loading';
+
   Future<String> getData() async {
     final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
     final response = await http.get(url);
@@ -49,9 +53,13 @@ class _HttpcommunicationState extends State<Httpcommunication> {
           future: getData(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              body = snapshot.data!;
+              final jsonString = snapshot.data!;
+              final jsonMap = jsonDecode(jsonString) as Map;
+
+              body = jsonMap['body'];
+              title = jsonMap['title'];
             }
-            return Text(body);
+            return Text('$title : $body');
           }
         ),
       ),
