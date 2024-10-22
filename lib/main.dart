@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+
+  final model =  HttpcommunicationModel();
+
+   MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +22,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Httpcommunication(),
+      home: ListenableBuilder(
+       listenable:model,
+        builder: (BuildContext context, Widget? child) {
+         return Httpcommunication(
+             model: model,
+         );
+        },
+      ),
     );
   }
 }
 
-class Httpcommunication extends StatefulWidget {
-  const Httpcommunication({super.key});
-
-  @override
-  State<Httpcommunication> createState() => _HttpcommunicationState();
-}
-
-class _HttpcommunicationState extends State<Httpcommunication> {
-  final model  = HttpcommunicationModel();
-
+class Httpcommunication extends StatelessWidget {
+  final HttpcommunicationModel model;
+  const Httpcommunication({
+    super.key,
+    required this.model});
 
 
 
@@ -45,13 +50,9 @@ class _HttpcommunicationState extends State<Httpcommunication> {
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-          child: ListenableBuilder(listenable: model,
-            builder: (BuildContext
-          context, Widget? child) {
-            return Text('${model.value.title} : ${model.value.body}');
-          },
+          child: Text('${model.value.title} : ${model.value.body}'),
           ),
-      ),
+
       floatingActionButton:
       FloatingActionButton(onPressed: () {
         model.getUiData();
