@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
@@ -16,19 +17,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+
+    Get.put(HttpcommunicationModel());
+
+    return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BlocProvider<HttpcommunicationModel>(
-       create: (BuildContext context) => HttpcommunicationModel(),
-       child: const Httpcommunication(),
-
-      ),
-    );
+      home:   Httpcommunication(),
+      );
 
   }
 }
@@ -40,32 +39,29 @@ class Httpcommunication extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    final HttpcommunicationModel model = Get.find();
     return Scaffold(
       appBar: AppBar(
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-      child: BlocBuilder<HttpcommunicationModel, HttpState>
-        (builder: (context, state) {
-         return Text('${state.title} : ${state.body}');
-        },
-          ),
-           ),
-      floatingActionButton:
-      FloatingActionButton(onPressed: () {
+      child: Obx(() => Text('${model.state.value.title} : ${model.state.value.body}'),
+      )),
 
-        context.read<HttpcommunicationModel>().getUiData();
+      floatingActionButton: FloatingActionButton(onPressed: () {
+
+        model.getUiData();
       }),
     );
   }
 }
 
-class HttpcommunicationModel extends Cubit<HttpState> {
-  HttpcommunicationModel() : super(HttpState()){
+class HttpcommunicationModel extends GetxController {
+  Rx<HttpState> state = HttpState().obs;
+
+  HttpcommunicationModel() {
     getUiData();
   }
-
 
   Future<String> _getData() async {
     final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
@@ -78,10 +74,10 @@ class HttpcommunicationModel extends Cubit<HttpState> {
     final jsonString = await _getData();
     final jsonMap = jsonDecode(jsonString) as Map;
 
-      emit(state.copyWith(
+      state.value = state.value.copyWith(
       title: jsonMap['title'],
       body: jsonMap['body'],
-    ));
+    );
   }
 }
 
