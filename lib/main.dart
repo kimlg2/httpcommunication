@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
@@ -9,7 +10,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
 
 
   const MyApp({super.key});
@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ChangeNotifierProvider<HttpcommunicationModel>(
-        create: (BuildContext context) => HttpcommunicationModel(),
+      home: BlocProvider<HttpcommunicationModel>(
+       create: (BuildContext context) => HttpcommunicationModel(),
        child: const Httpcommunication(),
 
       ),
@@ -46,13 +46,12 @@ class Httpcommunication extends StatelessWidget {
         title: const Text('HTTP 통신'),
       ),
       body: Center(
-          child: Consumer<HttpcommunicationModel>(
-            builder: (BuildContext context, model, Widget? child) {
-            return Text('${model.value.title} : ${model.value.body}');
-          },
+      child: BlocBuilder<HttpcommunicationModel, HttpState>
+        (builder: (context, state) {
+         return Text('${state.title} : ${state.body}');
+        },
           ),
-          ),
-
+           ),
       floatingActionButton:
       FloatingActionButton(onPressed: () {
 
@@ -62,12 +61,10 @@ class Httpcommunication extends StatelessWidget {
   }
 }
 
-class HttpcommunicationModel extends ValueNotifier<HttpState> {
+class HttpcommunicationModel extends Cubit<HttpState> {
   HttpcommunicationModel() : super(HttpState()){
     getUiData();
   }
-
-
 
 
   Future<String> _getData() async {
@@ -81,13 +78,10 @@ class HttpcommunicationModel extends ValueNotifier<HttpState> {
     final jsonString = await _getData();
     final jsonMap = jsonDecode(jsonString) as Map;
 
-     value = value.copyWith(
+      emit(state.copyWith(
       title: jsonMap['title'],
       body: jsonMap['body'],
-    );
-
-
-
+    ));
   }
 }
 
